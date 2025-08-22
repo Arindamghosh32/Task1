@@ -28,11 +28,11 @@ const Register = () => {
         return;
       }
 
-      // ✅ Save token + role
+     
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 
-      // ✅ Navigate based on role
+    
       if (data.role === "Admin") {
         navigate("/admin");
       } else {
