@@ -16,7 +16,7 @@ const Login = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include", // send/receive cookies if using jwt in cookies
+        credentials: "include", 
       });
 
       const data = await res.json();
@@ -26,11 +26,11 @@ const Login = () => {
         return;
       }
 
-      // ✅ Store token + role
+      
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 
-      // ✅ Navigate based on role
+      
       if (data.role === "Admin") {
         navigate("/admin");
       } else {

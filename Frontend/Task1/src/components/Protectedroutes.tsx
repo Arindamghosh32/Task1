@@ -5,7 +5,7 @@ import {jwtDecode } from "jwt-decode";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
-  role: string; // expected role: "Admin" | "User"
+  role: string; 
 }
 
 interface DecodedToken {
@@ -23,13 +23,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, role }) => {
   try {
     const decoded: DecodedToken = jwtDecode(token);
 
-    // check expiration
+   
     if (decoded.exp * 1000 < Date.now()) {
       localStorage.removeItem("token");
       return <Navigate to="/login" />;
     }
 
-    // check role
+   
     if (decoded.role !== role) {
       return <Navigate to="/unauthorized" />;
     }
