@@ -3,13 +3,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-
+const cookieParser = require('cookie-parser');
 const Authrouter = require('./Routes/Authrouter');
 dotenv.config();
 
 
 const app = express();
-
+app.use(cookieParser());
 
 
 
