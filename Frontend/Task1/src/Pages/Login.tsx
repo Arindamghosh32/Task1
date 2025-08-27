@@ -1,22 +1,35 @@
 import { useState } from "react";
-import { TextField, Box, FormControl, InputLabel, Select, MenuItem, Button, Container, Paper, Typography } from "@mui/material";
+import { TextField, Box, FormControl, InputLabel, Select, MenuItem, Button, Container, Paper, Typography, IconButton, InputAdornment } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [role, setRole] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
+
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!passwordRegex.test(password)) {
+      alert(
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+      );
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include", 
+        body: JSON.stringify({ email, password, role }),
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -26,11 +39,9 @@ const Login = () => {
         return;
       }
 
-      
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 
-      
       if (data.role === "Admin") {
         navigate("/admin");
       } else {
@@ -44,22 +55,36 @@ const Login = () => {
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mt: 8 }}>
-        <Typography variant="h5" align="center" gutterBottom>Login</Typography>
+        <Typography variant="h5" align="center" gutterBottom>
+          Login
+        </Typography>
         <form onSubmit={handleSubmit}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <TextField 
-              label="Email" 
-              variant="outlined" 
+            <TextField
+              label="Email"
+              variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter Your Email" 
+              placeholder="Enter Your Email"
             />
-            <TextField 
-              label="Password" 
-              variant="outlined" 
-              type="password"
+            <TextField
+              label="Password"
+              variant="outlined"
+              type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)} 
+              onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <FormControl fullWidth>
@@ -73,13 +98,15 @@ const Login = () => {
               </Select>
             </FormControl>
 
-            <Button type="submit" variant="contained" color="primary">Submit</Button>
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
           </Box>
         </form>
 
-        <br/>
+        <br />
         <Box sx={{ textAlign: "center" }}>
-          <Typography 
+          <Typography
             variant="caption"
             sx={{ cursor: "pointer", color: "blue" }}
             onClick={() => navigate("/register")}

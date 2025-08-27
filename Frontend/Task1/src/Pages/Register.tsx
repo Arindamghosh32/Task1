@@ -1,17 +1,29 @@
 import { useState } from "react";
-import { TextField, Box, FormControl, InputLabel, Select, MenuItem, Button, Container, Paper, Typography } from "@mui/material";
+import { TextField, Box, FormControl, InputLabel, Select, MenuItem, Button, Container, Paper, Typography, IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [role, setRole] = useState<string>("");
 
   const navigate = useNavigate();
 
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!passwordRegex.test(password)) {
+      alert(
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+      );
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:5000/register", {
@@ -28,11 +40,9 @@ const Register = () => {
         return;
       }
 
-     
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 
-    
       if (data.role === "Admin") {
         navigate("/admin");
       } else {
@@ -52,25 +62,37 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <TextField 
-              label="Name" 
-              variant="outlined" 
+            <TextField
+              label="Name"
+              variant="outlined"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            <TextField 
-              label="Email" 
-              variant="outlined" 
-              placeholder="Enter Your Email" 
+            <TextField
+              label="Email"
+              variant="outlined"
+              placeholder="Enter Your Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <TextField 
-              label="Password" 
-              variant="outlined" 
-              type="password"
+            <TextField
+              label="Password"
+              variant="outlined"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
 
             <FormControl fullWidth>
@@ -84,7 +106,9 @@ const Register = () => {
               </Select>
             </FormControl>
 
-            <Button type="submit" variant="contained" color="primary">Submit</Button>
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
           </Box>
         </form>
 
