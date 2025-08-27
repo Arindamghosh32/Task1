@@ -53,8 +53,15 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mt: 8 }}>
+    <Container maxWidth="sm"
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 3, width: "100%" }}>
         <Typography variant="h5" align="center" gutterBottom>
           Login
         </Typography>
